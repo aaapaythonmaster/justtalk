@@ -51,9 +51,10 @@ export default function Home() {
       });
 
       const data = await response.json();
+      // 确保数据格式正确
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: data.response,
+        content: data.response || "Sorry, I couldn't process your message. Please try again.",
         sender: 'ai',
         polished: data.polished,
         explanation: data.explanation

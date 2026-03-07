@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
 User's message: ${message}
 
-Format your response as JSON with the following structure:
+Return only the JSON object with no additional text, no Markdown formatting, and no code blocks. Use the following structure:
 {
   "response": "Your New Yorker-style response",
   "polished": "Polished version of user's message",
@@ -35,7 +35,15 @@ Format your response as JSON with the following structure:
     // 解析 AI 的响应
     let result;
     try {
-      result = JSON.parse(responseText);
+      // 清理可能的 Markdown 格式，如 ```json 或 ```
+      let cleanedText = responseText.trim();
+      if (cleanedText.startsWith('```json')) {
+        cleanedText = cleanedText.replace('```json', '').replace('```', '').trim();
+      } else if (cleanedText.startsWith('```')) {
+        cleanedText = cleanedText.replace('```', '').replace('```', '').trim();
+      }
+      // 尝试解析 JSON
+      result = JSON.parse(cleanedText);
     } catch (error) {
       // 如果 AI 没有返回有效的 JSON，返回默认响应
       result = {
